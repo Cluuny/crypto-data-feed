@@ -50,4 +50,4 @@ The system follows a **Hexagonal Architecture** (Ports & Adapters) approach to d
 
 1. Clone the repository:
    ```bash
-   git clone [https://github.com/tu-usuario/crypto-feed-aggregator.git](https://github.com/tu-usuario/crypto-feed-aggregator.git)
+   git clone https://github.com/Cluuny/crypto-data-feed.git
