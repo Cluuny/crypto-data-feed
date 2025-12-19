@@ -26,6 +26,8 @@
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/typeorm": "^11.0.0",
     "binance": "^3.1.5",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.3",
     "coinbase-api": "^1.1.7",
     "dotenv": "^17.2.3",
     "ioredis": "^5.8.2",

@@ -12,7 +12,9 @@ export class BinanceWsAdapter implements ExchangeConnectorPort {
   public connect(symbols: string[]): void {
     const wsClient = new WebsocketClient();
 
-    symbols = symbols.map((symbol) => `${symbol}@kline_1m`);
+    const streamSymbols = symbols.map(
+      (symbol) => symbol.toLowerCase().replace('-', '') + '@kline_1m',
+    );
 
     wsClient.on('message', (data: WsRawMessage) => {
       this.handleMessage(data as WsMessageKlineRaw);
@@ -48,7 +50,7 @@ export class BinanceWsAdapter implements ExchangeConnectorPort {
       );
     });
 
-    wsClient.subscribe(symbols, 'main').catch((err) => {
+    wsClient.subscribe(streamSymbols, 'main').catch((err) => {
       this.healthCheckStream$.next(
         `[ERROR] [${this.constructor.name}] - subscribe failed - ${err}`,
       );

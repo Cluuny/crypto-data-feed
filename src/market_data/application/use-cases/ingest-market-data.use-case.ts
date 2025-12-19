@@ -19,6 +19,7 @@ export class IngestMarketDataUseCase implements OnModuleInit {
 
       exchange.getPriceStream().subscribe({
         next: (tick) => {
+          console.log(`PRECIO RECIBIDO: ${tick.symbol} - $${tick.price}`);
           if (tick.volume > 0) {
             void this.publisher.publish(tick);
           }
