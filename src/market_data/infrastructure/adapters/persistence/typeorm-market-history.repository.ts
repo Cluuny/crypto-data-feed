@@ -24,4 +24,12 @@ export class TypeOrmMarketHistoryRepository implements MarketHistoryRepositoryPo
     dbEntity.source = tick.source;
     await this.ormRepo.save(dbEntity);
   }
+
+  async getAllTicks(): Promise<PriceTick[]> {
+    return await this.ormRepo.find();
+  }
+
+  async getCount(): Promise<number> {
+    return await this.ormRepo.count();
+  }
 }

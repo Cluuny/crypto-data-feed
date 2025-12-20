@@ -10,7 +10,7 @@ export const AppDataSource = new DataSource({
   username: process.env.DB_USER || 'postgres',
   password: process.env.DB_PASSWORD || 'password',
   database: process.env.DB_NAME || 'tsdb',
-  synchronize: true,
+  synchronize: false,
   migrations: ['src/infrastructure/database/migrations/*{.ts,.js}'],
   logging: true,
 });

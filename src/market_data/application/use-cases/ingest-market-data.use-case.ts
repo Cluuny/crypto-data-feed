@@ -13,7 +13,7 @@ export class IngestMarketDataUseCase implements OnModuleInit {
   ) {}
 
   onModuleInit() {
-    const symbols = ['BTC-USDT', 'ETH-USDT'];
+    const symbols = ['BTC-USDT'];
 
     // Suscribirse a todos los exchanges simultáneamente
     this.exchanges.forEach((exchange) => {
@@ -22,6 +22,7 @@ export class IngestMarketDataUseCase implements OnModuleInit {
       exchange.getPriceStream().subscribe({
         next: (tick) => {
           console.log(`PRECIO RECIBIDO: ${tick.symbol} - $${tick.close}`);
+          void this.historyRepo.getCount().then((count) => console.log(count));
           if (tick.volume > 0) {
             void this.publisher.publish(tick);
           }
