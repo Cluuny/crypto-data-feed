@@ -1,5 +1,6 @@
 import { WebsocketClient } from 'binance';
 import { WsMessageKlineRaw } from 'binance/lib/types/websockets/ws-events-raw';
+import { PriceTick } from '../market_data/domain/entities/price-tick.entity';
 // import { BinanceWSResponseDTO } from '../market_data/application/dtos/binance-wsresponse.dto';
 // import { PriceTick } from '../market_data/domain/entities/price-tick.entity';
 // import { BinanceWSResponseDTO } from '../market_data/application/dtos/binance-wsresponse.dto';
@@ -56,19 +57,17 @@ function start() {
 }
 
 function handleMessage(data: WsMessageKlineRaw): void {
-  console.log(data.k.c);
-  // const message = JSON.parse(data) as BinanceWSResponseDTO;
-  // if (message.e !== 'kline') {
-  // throw new Error('Invalid Data!');
-  // }
-  // const priceTick = new PriceTick(
-  //   message.s,
-  //   Number(message.k.c),
-  //   Number(message.k.v),
-  //   message.s,
-  //   new Date(message.k.t),
-  // );
-  // console.log(priceTick);
+  const priceTick = new PriceTick(
+    data.s,
+    new Date(data.k.t),
+    Number(data.k.o),
+    Number(data.k.h),
+    Number(data.k.l),
+    Number(data.k.c),
+    Number(data.k.v),
+    'BINANCE',
+  );
+  console.log(priceTick);
 }
 
 start();
