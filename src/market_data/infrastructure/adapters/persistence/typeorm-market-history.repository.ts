@@ -13,16 +13,22 @@ export class TypeOrmMarketHistoryRepository implements MarketHistoryRepositoryPo
   ) {}
 
   async save(tick: PriceTick): Promise<void> {
-    const dbEntity = new PriceTickEntity();
-    dbEntity.symbol = tick.symbol;
-    dbEntity.time = tick.time;
-    dbEntity.open = tick.open;
-    dbEntity.high = tick.high;
-    dbEntity.low = tick.low;
-    dbEntity.close = tick.close;
-    dbEntity.volume = tick.volume;
-    dbEntity.source = tick.source;
-    await this.ormRepo.save(dbEntity);
+    try {
+      // ✅ insert() no hace SELECT previo, evita locks
+      await this.ormRepo.insert({
+        symbol: tick.symbol,
+        time: tick.time,
+        open: tick.open,
+        high: tick.high,
+        low: tick.low,
+        close: tick.close,
+        volume: tick.volume,
+        source: tick.source,
+      });
+      console.log(`✅ Guardado: ${tick.symbol} - $${tick.close}`);
+    } catch (error: any) {
+      console.error('Error guardando:', error);
+    }
   }
 
   async getAllTicks(): Promise<PriceTick[]> {
@@ -31,5 +37,14 @@ export class TypeOrmMarketHistoryRepository implements MarketHistoryRepositoryPo
 
   async getCount(): Promise<number> {
     return await this.ormRepo.count();
+  }
+
+  async findLast(): Promise<PriceTickEntity[]> {
+    return await this.ormRepo.find({
+      order: {
+        time: 'DESC',
+      },
+      take: 1,
+    });
   }
 }
