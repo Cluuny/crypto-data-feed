@@ -1,6 +1,6 @@
 import { WebsocketClient, WsRawMessage } from 'binance';
-import { ExchangeConnectorPort } from '../../../domain/ports/in/exchange-connector.port';
-import { PriceTick } from '../../../domain/entities/price-tick.entity';
+import { ExchangeConnectorPort } from '../../../../domain/ports/in/exchange-connector.port';
+import { PriceTick } from '../../../../domain/entities/price-tick.entity';
 import { Observable, Subject } from 'rxjs';
 import { WsMessageKlineRaw } from 'binance/lib/types/websockets/ws-events-raw';
 
