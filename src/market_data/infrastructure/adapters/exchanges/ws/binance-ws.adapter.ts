@@ -58,17 +58,19 @@ export class BinanceWsAdapter implements ExchangeConnectorPort {
   }
 
   public handleMessage(data: WsMessageKlineRaw): void {
-    const priceTick = new PriceTick(
-      data.s,
-      new Date(data.k.t),
-      Number(data.k.o),
-      Number(data.k.h),
-      Number(data.k.l),
-      Number(data.k.c),
-      Number(data.k.v),
-      this.name,
-    );
-    this.priceStream$.next(priceTick);
+    if (data.k.x) {
+      const priceTick = new PriceTick(
+        data.s,
+        new Date(data.k.t),
+        Number(data.k.o),
+        Number(data.k.h),
+        Number(data.k.l),
+        Number(data.k.c),
+        Number(data.k.v),
+        this.name,
+      );
+      this.priceStream$.next(priceTick);
+    }
   }
 
   public getPriceStream(): Observable<PriceTick> {
