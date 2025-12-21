@@ -1,4 +1,4 @@
-import { RestClientConnectorPort } from '../../../../domain/ports/in/rest-client.connector.port';
+import { RestClientConnectorPort } from '../../../domain/ports/in/rest-client.connector.port';
 import { AllCoinsInformationResponse, MainClient } from 'binance';
 import dotenv from 'dotenv';
 
