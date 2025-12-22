@@ -3,7 +3,7 @@ import { PriceTickEntity } from '../../../infrastructure/adapters/persistence/en
 
 export abstract class MarketHistoryRepositoryPort {
   abstract save(tick: PriceTick): Promise<void>;
-  abstract getAllTicks(): Promise<PriceTick[]>;
+  abstract getAllTicks(): Promise<PriceTickEntity[]>;
   abstract getCount(): Promise<number>;
   abstract findLast(): Promise<PriceTickEntity[]>;
 }

@@ -13,11 +13,17 @@ export class BackfillMarketDataUseCase implements OnModuleInit {
     const lastTick = await this.historyRepo.findLast();
     const now = new Date();
 
-    if (lastTick) {
+    if (lastTick && lastTick.length > 0) {
       console.log(
         `Último dato: ${lastTick[0].time.toISOString()}. Iniciando descarga hasta AHORA...`,
       );
       this.downloadRange(lastTick[0].time, now);
+    } else {
+      console.log(
+        'La base de datos está vacía. No hay "último tick" para empalmar.',
+      );
+      // Opcional: Aquí podrías definir una fecha de inicio por defecto si quieres una carga inicial
+      // this.downloadRange(new Date('2023-01-01'), now);
     }
   }
 

@@ -1,5 +1,14 @@
-import { Entity, Column, PrimaryColumn, Index } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryColumn,
+  Index,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Hypertable, TimeColumn } from '@timescaledb/typeorm';
+import { SymbolEntity } from './typeorm-symbol.entity';
+import { ExchangesEntity } from './typeorm-exchanges.entity';
 
 @Entity('candles_m1')
 @Hypertable({
@@ -9,10 +18,30 @@ import { Hypertable, TimeColumn } from '@timescaledb/typeorm';
     compress_segmentby: 'symbol',
   },
 })
-@Index(['symbol', 'time'], { unique: true })
+@Index(['symbol', 'time'], { unique: true }) // Índice compuesto para Timescale
 export class PriceTickEntity {
-  @Column()
+  // --- LLAVE FORÁNEA 1: SYMBOL ---
+
+  // 1. La columna física (necesaria para la Primary Key compuesta de Timescale)
+  @PrimaryColumn()
   symbol: string;
+
+  // 2. La Relación (Foreign Key)
+  @ManyToOne(() => SymbolEntity)
+  @JoinColumn({ name: 'symbol', referencedColumnName: 'symbol' }) // 'name' debe coincidir con la propiedad de arriba
+  symbolRel: SymbolEntity;
+
+  // --- LLAVE FORÁNEA 2: EXCHANGE (SOURCE) ---
+
+  // 1. La columna física
+  @Column()
+  source: string;
+
+  // 2. La Relación (Foreign Key)
+  @ManyToOne(() => ExchangesEntity)
+  @JoinColumn({ name: 'source', referencedColumnName: 'name' }) // 'name' debe coincidir con la propiedad de arriba
+  exchangeRel: ExchangesEntity;
+  // --- COLUMNAS DE DATOS ---
 
   @TimeColumn()
   @PrimaryColumn()
@@ -32,7 +61,4 @@ export class PriceTickEntity {
 
   @Column('double precision')
   volume: number;
-
-  @Column()
-  source: string;
 }

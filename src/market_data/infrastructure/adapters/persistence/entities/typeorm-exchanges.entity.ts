@@ -1,7 +1,11 @@
 import { Entity, PrimaryColumn } from 'typeorm';
 
 @Entity('exchanges')
-export class Exchanges {
+export class ExchangesEntity {
   @PrimaryColumn()
   name: string;
+
+  constructor(name: string) {
+    this.name = name;
+  }
 }

@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { MarketHistoryRepositoryPort } from '../../../domain/ports/out/market-history-repository.port';
-import { PriceTick } from '../../../domain/entities/price-tick.entity'; // Entidad Dominio
-import { PriceTickEntity } from './entities/typeorm-tick.entity'; // Entidad TypeORM
+import { MarketHistoryRepositoryPort } from '../../../../domain/ports/out/market-history-repository.port';
+import { PriceTick } from '../../../../domain/entities/price-tick.entity'; // Entidad Dominio
+import { PriceTickEntity } from '../entities/typeorm-tick.entity'; // Entidad TypeORM
 
 @Injectable()
-export class TypeOrmMarketHistoryRepository implements MarketHistoryRepositoryPort {
+export class TypeormMarketHistoryRepositoryAdapter implements MarketHistoryRepositoryPort {
   constructor(
     @InjectRepository(PriceTickEntity)
     private readonly ormRepo: Repository<PriceTickEntity>,
@@ -14,7 +14,6 @@ export class TypeOrmMarketHistoryRepository implements MarketHistoryRepositoryPo
 
   async save(tick: PriceTick): Promise<void> {
     try {
-      // ✅ insert() no hace SELECT previo, evita locks
       await this.ormRepo.insert({
         symbol: tick.symbol,
         time: tick.time,
@@ -25,13 +24,13 @@ export class TypeOrmMarketHistoryRepository implements MarketHistoryRepositoryPo
         volume: tick.volume,
         source: tick.source,
       });
-      console.log(`✅ Guardado: ${tick.symbol} - $${tick.close}`);
+      console.log(`Guardado: ${tick.symbol} - $${tick.close}`);
     } catch (error: any) {
       console.error('Error guardando:', error);
     }
   }
 
-  async getAllTicks(): Promise<PriceTick[]> {
+  async getAllTicks(): Promise<PriceTickEntity[]> {
     return await this.ormRepo.find();
   }
 

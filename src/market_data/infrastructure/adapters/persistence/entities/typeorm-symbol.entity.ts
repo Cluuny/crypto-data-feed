@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 
 @Entity('symbols')
-export class Symbols {
+export class SymbolEntity {
   @PrimaryColumn()
   symbol: string;
 
@@ -10,4 +10,10 @@ export class Symbols {
 
   @Column()
   quote_currency: string;
+
+  constructor(symbol: string, base_currency: string, quote_currency: string) {
+    this.symbol = symbol;
+    this.base_currency = base_currency;
+    this.quote_currency = quote_currency;
+  }
 }
