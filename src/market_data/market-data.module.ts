@@ -8,7 +8,7 @@ import { RedisStreamAdapter } from './infrastructure/adapters/redis/redis-stream
 import { StreamPublisherPort } from './domain/ports/out/stream-publisher.port';
 import { MarketHistoryRepositoryPort } from './domain/ports/out/market-history-repository.port';
 import { TypeOrmMarketHistoryRepository } from './infrastructure/adapters/persistence/typeorm-market-history.repository';
-import { PriceTickEntity } from './infrastructure/adapters/persistence/entity/typeorm-tick.entity';
+import { PriceTickEntity } from './infrastructure/adapters/persistence/entities/typeorm-tick.entity';
 import { BinanceRestClientAdapter } from './infrastructure/adapters/exchanges/BinanceRestClientAdapter';
 import dotenv from 'dotenv';
 

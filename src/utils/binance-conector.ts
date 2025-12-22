@@ -2,7 +2,7 @@ import { WebsocketClient } from 'binance';
 import { WsMessageKlineRaw } from 'binance/lib/types/websockets/ws-events-raw';
 import { PriceTick } from '../market_data/domain/entities/price-tick.entity';
 // import { BinanceWSResponseDTO } from '../market_data/application/dtos/binance-wsresponse.dto';
-// import { PriceTick } from '../market_data/domain/entities/price-tick.entity';
+// import { PriceTick } from '../market_data/domain/entities/price-tick.entities';
 // import { BinanceWSResponseDTO } from '../market_data/application/dtos/binance-wsresponse.dto';
 
 function start() {

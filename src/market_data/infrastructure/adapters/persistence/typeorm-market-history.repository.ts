@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MarketHistoryRepositoryPort } from '../../../domain/ports/out/market-history-repository.port';
 import { PriceTick } from '../../../domain/entities/price-tick.entity'; // Entidad Dominio
-import { PriceTickEntity } from './entity/typeorm-tick.entity'; // Entidad TypeORM
+import { PriceTickEntity } from './entities/typeorm-tick.entity'; // Entidad TypeORM
 
 @Injectable()
 export class TypeOrmMarketHistoryRepository implements MarketHistoryRepositoryPort {

@@ -1,5 +1,5 @@
 import { PriceTick } from '../../entities/price-tick.entity';
-import { PriceTickEntity } from '../../../infrastructure/adapters/persistence/entity/typeorm-tick.entity'; // Ojo: La entidad PURA, sin TypeORM
+import { PriceTickEntity } from '../../../infrastructure/adapters/persistence/entities/typeorm-tick.entity'; // Ojo: La entidad PURA, sin TypeORM
 
 export abstract class MarketHistoryRepositoryPort {
   abstract save(tick: PriceTick): Promise<void>;

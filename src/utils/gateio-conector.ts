@@ -61,6 +61,9 @@ ws.on('error', (err) => {
 });
 
 function handleMessage(data: GateioWsreponseDto): void {
+  const [, crypto, pair] = data.result.n.split('_');
+  const symbol = crypto + pair;
+  console.log(symbol);
   if (data.result.w) {
     const priceTick = new PriceTick(
       data.result.n,

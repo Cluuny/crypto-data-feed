@@ -29,10 +29,8 @@ ws.subscribeV5(['kline.1.BTCUSDT'], 'linear');
 // Listen to events coming from websockets. This is the primary data source
 ws.on('update', (data) => {
   const convertedData = data as BybitWsreponseDto;
-  if (convertedData.data[0].confirm) {
-    console.log(convertedData.data[0]);
-  }
-  console.log('data received', JSON.stringify(data, null, 2));
+  const symbolName = convertedData.topic.replace('kline.1.', '');
+  console.log(`data received ${symbolName}`);
 });
 
 // Optional: Listen to websocket connection open event
