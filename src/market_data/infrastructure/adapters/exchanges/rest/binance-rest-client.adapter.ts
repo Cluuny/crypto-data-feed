@@ -8,7 +8,7 @@ export class BinanceRestClientAdapter implements RestClientConnectorPort {
   client: MainClient;
   constructor() {
     dotenv.config();
-    this.name = 'BINANCE_REST';
+    this.name = 'BINANCE';
     this.client = new MainClient({
       api_key: process.env.BINANCE_API_KEY,
       api_secret: process.env.BINANCE_API_SECRET,
@@ -40,7 +40,7 @@ export class BinanceRestClientAdapter implements RestClientConnectorPort {
           Number(kline[3]),
           Number(kline[4]),
           Number(kline[5]),
-          'BINANCE_REST',
+          this.name,
         ),
       );
     });

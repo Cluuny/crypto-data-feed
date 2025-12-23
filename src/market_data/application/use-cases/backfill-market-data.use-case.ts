@@ -24,8 +24,9 @@ export class BackfillMarketDataUseCase implements OnModuleInit {
 
   private async processBackfill(symbols: string[], targetEndDate: Date) {
     for (const symbol of symbols) {
+      const correctedSymbol = symbol.replace('-', '');
       for (const client of this.restClientList) {
-        await this.syncExchangeSession(client, symbol, targetEndDate);
+        await this.syncExchangeSession(client, correctedSymbol, targetEndDate);
       }
     }
     this.logger.log('Sincronización completa de todos los pares.');
@@ -49,7 +50,6 @@ export class BackfillMarketDataUseCase implements OnModuleInit {
         `[${client.name}] ${symbol} reanudando desde ${startTime.toISOString()}`,
       );
     } else {
-      // Si Gate.io es nuevo, empezamos desde Génesis
       startTime = this.GENESIS_DATE;
       this.logger.log(
         `[${client.name}] ${symbol} nuevo ingreso. Iniciando desde cero.`,
@@ -58,7 +58,6 @@ export class BackfillMarketDataUseCase implements OnModuleInit {
 
     if (startTime >= targetEndDate) return;
 
-    // 2. Descargamos el rango para este par específico
     await this.downloadRange(client, symbol, startTime, targetEndDate);
   }
 
