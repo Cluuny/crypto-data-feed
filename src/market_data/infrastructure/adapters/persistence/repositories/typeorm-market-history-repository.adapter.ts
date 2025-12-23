@@ -73,8 +73,7 @@ export class TypeormMarketHistoryRepositoryAdapter implements MarketHistoryRepos
 
   async saveMany(ticks: PriceTick[]): Promise<void> {
     if (ticks.length === 0) return;
-
-    const entities = ticks.map((t) => this.toEntity(t)); // Tu mapper
+    const entities = ticks.map((tick) => this.toEntity(tick));
 
     await this.ormRepo
       .createQueryBuilder()
@@ -94,6 +93,27 @@ export class TypeormMarketHistoryRepositoryAdapter implements MarketHistoryRepos
       order: { time: 'DESC' },
     });
     return entity ? this.toDomain(entity) : null;
+  }
+
+  async findLastTickForSource(
+    symbol: string,
+    source: string,
+  ): Promise<PriceTick | null> {
+    const entity = await this.ormRepo.findOne({
+      where: {
+        symbol: symbol,
+        source: source,
+      },
+      order: {
+        time: 'DESC',
+      },
+    });
+
+    if (!entity) {
+      return null;
+    }
+
+    return this.toDomain(entity);
   }
 
   toEntity(tick: PriceTick): PriceTickEntity {

@@ -16,4 +16,8 @@ export abstract class MarketHistoryRepositoryPort {
     symbol: string,
     source: string,
   ): Promise<PriceTick | null>;
+  abstract findLastTickForSource(
+    symbol: string,
+    source: string,
+  ): Promise<PriceTick | null>;
 }
