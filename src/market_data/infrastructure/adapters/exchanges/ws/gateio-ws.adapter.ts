@@ -5,14 +5,12 @@ import { WebsocketClient, WsTopicRequest } from 'gateio-api';
 import { GateioWsreponseDto } from '../../../../application/dtos/gateio-wsreponse.dto';
 
 export class GateioWsAdapter implements ExchangeConnectorPort {
-  public name = 'GATE.IO';
+  public name = 'GATEIO';
   private priceStream$: Subject<PriceTick> = new Subject<PriceTick>();
   private healthCheckStream$: Subject<string> = new Subject<string>();
 
   connect(symbols: string[]): void {
     const wsClient = new WebsocketClient();
-    // symbols = ['BTC-USDT']
-    // Gateio needed payload = ['BTC_USDT']
     const modifiedSymbols = symbols.map((symbol) => symbol.replace('-', '_'));
     const payloads: (string | WsTopicRequest<string, any>)[] = [];
 
@@ -26,7 +24,6 @@ export class GateioWsAdapter implements ExchangeConnectorPort {
 
     wsClient.subscribe(payloads, 'spotV4');
 
-    // Listen to events coming from websockets. This is the primary data source
     wsClient.on('update', (data) => {
       const convertedData = data as GateioWsreponseDto;
       if (convertedData.result.w) {

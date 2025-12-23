@@ -1,5 +1,4 @@
 export class PriceTick {
-  // 1. Declarar las propiedades explícitamente
   public readonly symbol: string;
   public readonly time: Date;
   public readonly open: number;
@@ -9,7 +8,6 @@ export class PriceTick {
   public readonly volume: number;
   public readonly source: string;
 
-  // 2. Constructor estándar (sin 'public' ni 'readonly' dentro de los paréntesis)
   constructor(
     symbol: string,
     time: Date,

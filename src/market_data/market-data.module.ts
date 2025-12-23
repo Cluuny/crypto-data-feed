@@ -7,7 +7,7 @@ import { RedisStreamAdapter } from './infrastructure/adapters/redis/redis-stream
 import { StreamPublisherPort } from './domain/ports/out/stream-publisher.port';
 import { MarketHistoryRepositoryPort } from './domain/ports/out/market-history-repository.port';
 import { TypeormMarketHistoryRepositoryAdapter } from './infrastructure/adapters/persistence/repositories/typeorm-market-history-repository.adapter';
-import { BinanceRestClientAdapter } from './infrastructure/adapters/exchanges/BinanceRestClientAdapter';
+import { BinanceRestClientAdapter } from './infrastructure/adapters/exchanges/rest/binance-rest-client.adapter';
 import { SymbolsRepositoryPort } from './domain/ports/out/symbols-repository.port';
 import { TypeormSymbolRepositoryAdapter } from './infrastructure/adapters/persistence/repositories/typeorm-symbol-repository.adapter';
 import { ExchangesRepositoryPort } from './domain/ports/out/exchange-repository.port';
@@ -16,6 +16,8 @@ import dotenv from 'dotenv';
 import { PriceTickEntity } from './infrastructure/adapters/persistence/entities/typeorm-tick.entity';
 import { SymbolEntity } from './infrastructure/adapters/persistence/entities/typeorm-symbol.entity';
 import { ExchangesEntity } from './infrastructure/adapters/persistence/entities/typeorm-exchanges.entity';
+import { BybitWsAdapter } from './infrastructure/adapters/exchanges/ws/bybit-ws.adapter';
+import { GateioWsAdapter } from './infrastructure/adapters/exchanges/ws/gateio-ws.adapter';
 
 dotenv.config();
 
@@ -33,7 +35,11 @@ dotenv.config();
     {
       provide: 'EXCHANGE_CONNECTORS',
       useFactory: () => {
-        return [new BinanceWsAdapter()];
+        return [
+          new BinanceWsAdapter(),
+          new BybitWsAdapter(),
+          new GateioWsAdapter(),
+        ];
       },
     },
     {

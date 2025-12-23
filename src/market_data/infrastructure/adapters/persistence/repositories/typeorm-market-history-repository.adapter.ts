@@ -14,16 +14,7 @@ export class TypeormMarketHistoryRepositoryAdapter implements MarketHistoryRepos
 
   async save(tick: PriceTick): Promise<void> {
     try {
-      await this.ormRepo.insert({
-        symbol: tick.symbol,
-        time: tick.time,
-        open: tick.open,
-        high: tick.high,
-        low: tick.low,
-        close: tick.close,
-        volume: tick.volume,
-        source: tick.source,
-      });
+      await this.ormRepo.insert(this.toEntity(tick));
       console.log(`Guardado: ${tick.symbol} - $${tick.close}`);
     } catch (error: any) {
       console.error('Error guardando:', error);
@@ -45,5 +36,89 @@ export class TypeormMarketHistoryRepositoryAdapter implements MarketHistoryRepos
       },
       take: 1,
     });
+  }
+
+  async findGaps(
+    symbol: string,
+    source: string,
+    lookback: string = '30 days',
+  ): Promise<{ start: Date; end: Date }[]> {
+    const query = `
+    WITH gaps AS (
+      SELECT
+        time AS gap_start,
+        LEAD(time) OVER (ORDER BY time) AS next_candle
+      FROM candles_m1
+      WHERE symbol = $1 
+      AND source = $2  
+      AND time > NOW() - $3::INTERVAL
+    )
+    SELECT
+      gap_start + INTERVAL '1 minute' AS "start",
+      next_candle - INTERVAL '1 minute' AS "end"
+    FROM gaps
+    WHERE next_candle - gap_start > INTERVAL '1 minute';
+  `;
+
+    const results: { start: Date; end: Date }[] = await this.ormRepo.query(
+      query,
+      [symbol, source, lookback],
+    );
+
+    return results.map((row) => ({
+      start: row.start,
+      end: row.end,
+    }));
+  }
+
+  async saveMany(ticks: PriceTick[]): Promise<void> {
+    if (ticks.length === 0) return;
+
+    const entities = ticks.map((t) => this.toEntity(t)); // Tu mapper
+
+    await this.ormRepo
+      .createQueryBuilder()
+      .insert()
+      .into(PriceTickEntity)
+      .values(entities)
+      .orIgnore()
+      .execute();
+  }
+
+  async findLastTick(
+    symbol: string,
+    source: string,
+  ): Promise<PriceTick | null> {
+    const entity = await this.ormRepo.findOne({
+      where: { symbol, source },
+      order: { time: 'DESC' },
+    });
+    return entity ? this.toDomain(entity) : null;
+  }
+
+  toEntity(tick: PriceTick): PriceTickEntity {
+    return new PriceTickEntity(
+      tick.symbol,
+      tick.time,
+      tick.open,
+      tick.high,
+      tick.low,
+      tick.close,
+      tick.volume,
+      tick.source,
+    );
+  }
+
+  toDomain(entity: PriceTickEntity): PriceTick {
+    return new PriceTick(
+      entity.symbol,
+      entity.time,
+      entity.open,
+      entity.high,
+      entity.low,
+      entity.close,
+      entity.volume,
+      entity.source,
+    );
   }
 }

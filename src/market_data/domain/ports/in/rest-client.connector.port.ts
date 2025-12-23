@@ -1,4 +1,11 @@
+import { PriceTick } from '../../entities/price-tick.entity';
+
 export interface RestClientConnectorPort {
   name: string;
-  getKlines(symbols: string[], startTime: Date, endTime: Date): void;
+  getKlines(
+    symbol: string,
+    startTime: Date,
+    endTime: Date,
+    limit?: number,
+  ): Promise<PriceTick[]>;
 }

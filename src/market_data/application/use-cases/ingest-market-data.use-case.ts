@@ -61,7 +61,6 @@ export class IngestMarketDataUseCase implements OnModuleInit {
     this.knownExchanges.add(name);
   }
 
-  // Helper para verificar/crear Símbolo
   private async ensureSymbolExists(symbolStr: string) {
     if (this.knownSymbols.has(symbolStr)) return;
 

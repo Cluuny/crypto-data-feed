@@ -18,30 +18,20 @@ import { ExchangesEntity } from './typeorm-exchanges.entity';
     compress_segmentby: 'symbol',
   },
 })
-@Index(['symbol', 'time'], { unique: true }) // Índice compuesto para Timescale
+@Index(['symbol', 'time'], { unique: true })
 export class PriceTickEntity {
-  // --- LLAVE FORÁNEA 1: SYMBOL ---
-
-  // 1. La columna física (necesaria para la Primary Key compuesta de Timescale)
   @PrimaryColumn()
   symbol: string;
 
-  // 2. La Relación (Foreign Key)
   @ManyToOne(() => SymbolEntity)
-  @JoinColumn({ name: 'symbol', referencedColumnName: 'symbol' }) // 'name' debe coincidir con la propiedad de arriba
+  @JoinColumn({ name: 'symbol', referencedColumnName: 'symbol' })
   symbolRel: SymbolEntity;
 
-  // --- LLAVE FORÁNEA 2: EXCHANGE (SOURCE) ---
-
-  // 1. La columna física
   @Column()
   source: string;
-
-  // 2. La Relación (Foreign Key)
   @ManyToOne(() => ExchangesEntity)
-  @JoinColumn({ name: 'source', referencedColumnName: 'name' }) // 'name' debe coincidir con la propiedad de arriba
+  @JoinColumn({ name: 'source', referencedColumnName: 'name' })
   exchangeRel: ExchangesEntity;
-  // --- COLUMNAS DE DATOS ---
 
   @TimeColumn()
   @PrimaryColumn()
@@ -61,4 +51,24 @@ export class PriceTickEntity {
 
   @Column('double precision')
   volume: number;
+
+  constructor(
+    symbol: string,
+    time: Date,
+    open: number,
+    high: number,
+    low: number,
+    close: number,
+    volume: number,
+    source: string,
+  ) {
+    this.symbol = symbol;
+    this.time = time;
+    this.open = open;
+    this.high = high;
+    this.low = low;
+    this.close = close;
+    this.volume = volume;
+    this.source = source;
+  }
 }
