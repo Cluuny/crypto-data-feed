@@ -14,7 +14,16 @@ export class TypeormMarketHistoryRepositoryAdapter implements MarketHistoryRepos
 
   async save(tick: PriceTick): Promise<void> {
     try {
-      await this.ormRepo.insert(this.toEntity(tick));
+      await this.ormRepo
+        .createQueryBuilder()
+        .insert()
+        .into(PriceTickEntity)
+        .values(this.toEntity(tick))
+        .orUpdate(
+          ['open', 'high', 'low', 'close', 'volume'],
+          ['symbol', 'time', 'source'],
+        )
+        .execute();
       console.log(`Guardado: ${tick.symbol} - $${tick.close}`);
     } catch (error: any) {
       console.error('Error guardando:', error);

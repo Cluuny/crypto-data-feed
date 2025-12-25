@@ -18,7 +18,7 @@ import { ExchangesEntity } from './typeorm-exchanges.entity';
     compress_segmentby: 'symbol',
   },
 })
-@Index(['symbol', 'time'], { unique: true })
+@Index(['symbol', 'time', 'source'], { unique: true })
 export class PriceTickEntity {
   @PrimaryColumn()
   symbol: string;
@@ -28,7 +28,9 @@ export class PriceTickEntity {
   symbolRel: SymbolEntity;
 
   @Column()
-  source: string;
+  @PrimaryColumn()
+  source: string; // Esto ya estaba bien
+
   @ManyToOne(() => ExchangesEntity)
   @JoinColumn({ name: 'source', referencedColumnName: 'name' })
   exchangeRel: ExchangesEntity;

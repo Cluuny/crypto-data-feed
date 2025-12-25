@@ -59,6 +59,7 @@ export class BinanceWsAdapter implements ExchangeConnectorPort {
 
   public handleMessage(data: WsMessageKlineRaw): void {
     if (data.k.x) {
+      console.info(`Recibido ${data.k.c}`);
       const priceTick = new PriceTick(
         data.s,
         new Date(data.k.t),

@@ -16,8 +16,6 @@ import dotenv from 'dotenv';
 import { PriceTickEntity } from './infrastructure/adapters/persistence/entities/typeorm-tick.entity';
 import { SymbolEntity } from './infrastructure/adapters/persistence/entities/typeorm-symbol.entity';
 import { ExchangesEntity } from './infrastructure/adapters/persistence/entities/typeorm-exchanges.entity';
-import { BybitWsAdapter } from './infrastructure/adapters/exchanges/ws/bybit-ws.adapter';
-import { GateioWsAdapter } from './infrastructure/adapters/exchanges/ws/gateio-ws.adapter';
 
 dotenv.config();
 
@@ -35,11 +33,7 @@ dotenv.config();
     {
       provide: 'EXCHANGE_CONNECTORS',
       useFactory: () => {
-        return [
-          new BinanceWsAdapter(),
-          new BybitWsAdapter(),
-          new GateioWsAdapter(),
-        ];
+        return [new BinanceWsAdapter()];
       },
     },
     {
