@@ -1,0 +1,41 @@
+services:
+  app:
+    build:
+      context: .
+      target: ${NODE_ENV:-development} # Default to development if not set
+      args:
+        - NODE_ENV=${NODE_ENV:-development}
+        - APP_PORT=${APP_PORT:-3000}
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      # Usa .env y permite sobreescribir con .env.dev si existe
+      - .env
+      - .env.dev
+    restart: unless-stopped
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npm run start:dev
+
+  db:
+    image: timescale/timescaledb-ha:pg16
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      # Modificado para comprobar la base de datos específica
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db_data:
