@@ -1,3 +1,4 @@
+// src/market-data/application/dtos/binance-wsresponse.dto.ts
 export class BinanceWSResponseDTO {
   e: string;
   E: number;
