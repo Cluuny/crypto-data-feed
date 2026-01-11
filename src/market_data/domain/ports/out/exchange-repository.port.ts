@@ -1,7 +1,7 @@
-import { ExchangesEntity } from '../../../infrastructure/adapters/persistence/entities/typeorm-exchanges.entity';
+// src/market-data/domain/ports/out/exchange-repository.port.ts
+import { Exchange } from '../../model/exchange';
 
 export abstract class ExchangesRepositoryPort {
-  abstract getExchange(name: string): Promise<Promise<ExchangesEntity> | null>;
-  abstract getAllExchanges(): Promise<ExchangesEntity[]>;
-  abstract saveExchange(newExchange: ExchangesEntity): void;
+  abstract findByName(name: string): Promise<Exchange | null>;
+  abstract save(exchange: Exchange): Promise<void>;
 }

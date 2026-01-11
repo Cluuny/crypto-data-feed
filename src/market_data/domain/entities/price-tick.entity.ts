@@ -1,3 +1,4 @@
+// src/market-data/domain/entities/price-tick.entity.ts
 export class PriceTick {
   public readonly symbol: string;
   public readonly time: Date;

@@ -1,23 +1,35 @@
+// src/market-data/domain/ports/out/market-history-repository.port.ts
 import { PriceTick } from '../../entities/price-tick.entity';
-import { PriceTickEntity } from '../../../infrastructure/adapters/persistence/entities/typeorm-tick.entity';
+import { GapRangeDto } from '../../../application/dtos/gap-range.dto';
+
+export interface SymbolGapStats {
+  symbol: string;
+  source: string;
+  firstCandle: Date;
+  lastCandle: Date;
+  expectedCandles: number;
+  actualCandles: number;
+  missingCandles: number;
+}
 
 export abstract class MarketHistoryRepositoryPort {
   abstract save(tick: PriceTick): Promise<void>;
   abstract saveMany(ticks: PriceTick[]): Promise<void>;
-  abstract getAllTicks(): Promise<PriceTickEntity[]>;
-  abstract getCount(): Promise<number>;
-  abstract findLast(): Promise<PriceTickEntity[]>;
-  abstract findGaps(
-    symbol: string,
-    source: string,
-    lookback: string,
-  ): Promise<{ start: Date; end: Date }[]>;
-  abstract findLastTick(
-    symbol: string,
-    source: string,
-  ): Promise<PriceTick | null>;
   abstract findLastTickForSource(
     symbol: string,
     source: string,
   ): Promise<PriceTick | null>;
+
+  abstract findFirstTickForSource(
+    symbol: string,
+    source: string,
+  ): Promise<PriceTick | null>;
+
+  abstract findGapRanges(
+    symbol: string,
+    source: string,
+    minGapMinutes?: number,
+  ): Promise<GapRangeDto[]>;
+
+  abstract findAllSymbolsWithGaps(): Promise<SymbolGapStats[]>;
 }

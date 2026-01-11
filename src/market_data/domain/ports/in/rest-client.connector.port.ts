@@ -1,3 +1,4 @@
+// src/market-data/domain/ports/in/rest-client.connector.port.ts
 import { PriceTick } from '../../entities/price-tick.entity';
 
 export interface RestClientConnectorPort {

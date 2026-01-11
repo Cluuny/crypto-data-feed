@@ -1,7 +1,7 @@
-import { SymbolEntity } from '../../../infrastructure/adapters/persistence/entities/typeorm-symbol.entity';
+// src/market-data/domain/ports/out/symbols-repository.port.ts
+import { Symbol } from '../../model/symbol';
 
 export abstract class SymbolsRepositoryPort {
-  abstract getAll(): Promise<SymbolEntity[]>;
-  abstract getSymbol(name: string): Promise<Promise<SymbolEntity> | null>;
-  abstract saveSymbols(symbol: SymbolEntity): void;
+  abstract findBySymbol(symbol: string): Promise<Symbol | null>;
+  abstract save(symbol: Symbol): Promise<void>;
 }

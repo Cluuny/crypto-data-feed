@@ -1,3 +1,4 @@
+// src/market-data/domain/ports/in/exchange-connector.port.ts
 import { Observable } from 'rxjs';
 import { PriceTick } from '../../entities/price-tick.entity';
 
