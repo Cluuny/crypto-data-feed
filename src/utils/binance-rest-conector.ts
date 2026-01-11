@@ -4,18 +4,13 @@ import { PriceTick } from '../market_data/domain/entities/price-tick.entity';
 
 async function connect() {
   dotenv.config();
-  const api_key = process.env.BINANCE_API_KEY;
-  const api_secret = process.env.BINANCE_API_SECRET;
 
   const restClient: MainClient = new MainClient({
-    api_key: 'PmfQIusJQ6W9ZiSDjSXJKV972ZKfqLlVB6a7T6MFsdKVAbwnHVLgZiPNYRxpNkhN',
+    api_key: 'utgOTnW05hYrakGsMl5szLsBseIeOSRdyUCuBGbdeDo8fFhSYZQqWvX0XlrWG3gm',
     api_secret:
-      'KB85I2rHTcN82YqnP3i89gHtZ9pbISBRMbH6oPeB2MJGeRnG5UKCbb9IxefzplMf',
+      'Jw0Q5JSq8ZqKoP6OGfAWFhhBNOxc0oYxzX8Mi3lw1hK2M95FpXpj9lvcrQkq4XWx',
     testnet: true,
   });
-
-  console.log(api_key);
-  console.log(api_secret);
 
   // restClient
   //   .getAccountTradeList({ symbol: 'BTCUSDT' })
@@ -34,6 +29,8 @@ async function connect() {
   //   .catch((err) => {
   //     console.error('getExchangeInfo inverse error: ', err);
   //   });
+  console.log(`Fecha ${Date.now()}`);
+
   const klineParams = {
     symbol: 'BTCUSDT',
     interval: '1m',
