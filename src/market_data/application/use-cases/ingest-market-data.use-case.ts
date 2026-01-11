@@ -1,4 +1,5 @@
-import { Injectable, OnModuleInit, Inject } from '@nestjs/common';
+// src/market-data/application/use-cases/ingest-market-data.use-case.ts
+import { Injectable, OnModuleInit, Inject, Logger } from '@nestjs/common';
 import { ExchangeConnectorPort } from '../../domain/ports/in/exchange-connector.port';
 import { StreamPublisherPort } from '../../domain/ports/out/stream-publisher.port';
 import { MarketHistoryRepositoryPort } from '../../domain/ports/out/market-history-repository.port';
@@ -7,9 +8,11 @@ import { ExchangesRepositoryPort } from '../../domain/ports/out/exchange-reposit
 import { ExchangesEntity } from '../../infrastructure/adapters/persistence/entities/typeorm-exchanges.entity';
 import { SymbolEntity } from '../../infrastructure/adapters/persistence/entities/typeorm-symbol.entity';
 import { PriceTick } from '../../domain/entities/price-tick.entity';
+import jsonData from './../../../config/config.json';
 
 @Injectable()
 export class IngestMarketDataUseCase implements OnModuleInit {
+  private readonly logger = new Logger(IngestMarketDataUseCase.name);
   private knownSymbols = new Set<string>();
   private knownExchanges = new Set<string>();
 
@@ -23,7 +26,7 @@ export class IngestMarketDataUseCase implements OnModuleInit {
   ) {}
 
   onModuleInit() {
-    const symbolsToSubscribe = ['BTC-USDT'];
+    const symbolsToSubscribe = jsonData.symbols;
 
     this.exchanges.forEach((exchange) => {
       void this.ensureExchangeExists(exchange.name);
@@ -34,18 +37,28 @@ export class IngestMarketDataUseCase implements OnModuleInit {
           if (tick.volume > 0) {
             void (async () => {
               try {
+                // Aseguramos que el símbolo exista ANTES de intentar guardar el tick
                 await this.ensureSymbolExists(tick.symbol);
 
+                // Ahora guardamos el tick de forma segura
                 await this.historyRepo.save(tick);
 
+                this.logger.log(
+                  `[${exchange.name}] - [${tick.symbol}] Tick recibido: [close] - ${tick.close}`,
+                );
+
+                // Publicar en Stream de Redis
                 void this.publisher.publish(tick);
               } catch (error) {
-                console.error(`Error procesando tick ${tick.symbol}:`, error);
+                this.logger.error(
+                  `Error procesando tick [${exchange.name}] - [${tick.symbol}]:`,
+                  error,
+                );
               }
             })();
           }
         },
-        error: (err) => console.error(`Error en stream ${exchange.name}`, err),
+        error: (err) => console.error(`Error en stream [${exchange.name}]`, err),
       });
     });
   }
@@ -53,26 +66,28 @@ export class IngestMarketDataUseCase implements OnModuleInit {
   private async ensureExchangeExists(name: string) {
     if (this.knownExchanges.has(name)) return;
 
-    const exists = await this.exchangesRepo.getExchange(name);
+    const exists = await this.exchangesRepo.findByName(name);
     if (!exists) {
-      console.log(`Registrando nuevo exchange: ${name}`);
-      this.exchangesRepo.saveExchange(new ExchangesEntity(name));
+      // Esperamos a que se guarde para evitar race conditions si varios ticks llegan a la vez
+      await this.exchangesRepo.save(new ExchangesEntity(name));
     }
+
     this.knownExchanges.add(name);
   }
 
   private async ensureSymbolExists(symbolStr: string) {
     if (this.knownSymbols.has(symbolStr)) return;
 
-    const exists = await this.symbolsRepo.getSymbol(symbolStr);
+    const exists = await this.symbolsRepo.findBySymbol(symbolStr);
     if (!exists) {
-      console.log(`Registrando nuevo símbolo: ${symbolStr}`);
       const [base, quote] = symbolStr.includes('-')
         ? symbolStr.split('-')
-        : [symbolStr, 'USD'];
+        : [symbolStr, 'USDT'];
 
-      this.symbolsRepo.saveSymbols(new SymbolEntity(symbolStr, base, quote));
+      // Esperamos a que se guarde el símbolo antes de continuar
+      await this.symbolsRepo.save(new SymbolEntity(symbolStr, base, quote));
     }
+
     this.knownSymbols.add(symbolStr);
   }
 }
