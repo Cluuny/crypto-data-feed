@@ -1,3 +1,4 @@
+// src/market-data/infrastructure/adapters/persistence/entities/typeorm-symbol.entity.ts
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 
 @Entity('symbols')

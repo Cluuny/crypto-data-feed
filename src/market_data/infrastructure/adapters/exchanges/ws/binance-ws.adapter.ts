@@ -1,9 +1,12 @@
+// src/market-data/infrastructure/adapters/exchanges/ws/binance-ws-adapter.ts
+import { Injectable } from '@nestjs/common';
 import { WebsocketClient, WsRawMessage } from 'binance';
 import { ExchangeConnectorPort } from '../../../../domain/ports/in/exchange-connector.port';
 import { PriceTick } from '../../../../domain/entities/price-tick.entity';
 import { Observable, Subject } from 'rxjs';
 import { WsMessageKlineRaw } from 'binance/lib/types/websockets/ws-events-raw';
 
+@Injectable()
 export class BinanceWsAdapter implements ExchangeConnectorPort {
   public name = 'BINANCE';
   private priceStream$: Subject<PriceTick> = new Subject<PriceTick>();
@@ -59,7 +62,6 @@ export class BinanceWsAdapter implements ExchangeConnectorPort {
 
   public handleMessage(data: WsMessageKlineRaw): void {
     if (data.k.x) {
-      console.info(`Recibido ${data.k.c}`);
       const priceTick = new PriceTick(
         data.s,
         new Date(data.k.t),

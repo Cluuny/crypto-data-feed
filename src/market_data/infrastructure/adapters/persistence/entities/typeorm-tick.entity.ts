@@ -1,11 +1,5 @@
-import {
-  Entity,
-  Column,
-  PrimaryColumn,
-  Index,
-  ManyToOne,
-  JoinColumn,
-} from 'typeorm';
+// src/market-data/infrastructure/adapters/persistence/entities/typeorm-tick.entity.ts
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { Hypertable, TimeColumn } from '@timescaledb/typeorm';
 import { SymbolEntity } from './typeorm-symbol.entity';
 import { ExchangesEntity } from './typeorm-exchanges.entity';
@@ -18,26 +12,30 @@ import { ExchangesEntity } from './typeorm-exchanges.entity';
     compress_segmentby: 'symbol',
   },
 })
-@Index(['symbol', 'time', 'source'], { unique: true })
-export class PriceTickEntity {
-  @PrimaryColumn()
+export class CandleM1Entity {
+  @PrimaryColumn({ type: 'text' })
   symbol: string;
 
-  @ManyToOne(() => SymbolEntity)
-  @JoinColumn({ name: 'symbol', referencedColumnName: 'symbol' })
-  symbolRel: SymbolEntity;
-
-  @Column()
-  @PrimaryColumn()
-  source: string; // Esto ya estaba bien
-
-  @ManyToOne(() => ExchangesEntity)
-  @JoinColumn({ name: 'source', referencedColumnName: 'name' })
-  exchangeRel: ExchangesEntity;
+  @PrimaryColumn({ type: 'text' })
+  source: string;
 
   @TimeColumn()
-  @PrimaryColumn()
+  @PrimaryColumn({ type: 'timestamptz' })
   time: Date;
+
+  @ManyToOne(() => SymbolEntity, {
+    nullable: true,
+    createForeignKeyConstraints: false,
+  })
+  @JoinColumn({ name: 'symbol', referencedColumnName: 'symbol' })
+  symbolRel?: SymbolEntity;
+
+  @ManyToOne(() => ExchangesEntity, {
+    nullable: true,
+    createForeignKeyConstraints: false,
+  })
+  @JoinColumn({ name: 'source', referencedColumnName: 'name' })
+  exchangeRel?: ExchangesEntity;
 
   @Column('double precision')
   open: number;
@@ -53,24 +51,4 @@ export class PriceTickEntity {
 
   @Column('double precision')
   volume: number;
-
-  constructor(
-    symbol: string,
-    time: Date,
-    open: number,
-    high: number,
-    low: number,
-    close: number,
-    volume: number,
-    source: string,
-  ) {
-    this.symbol = symbol;
-    this.time = time;
-    this.open = open;
-    this.high = high;
-    this.low = low;
-    this.close = close;
-    this.volume = volume;
-    this.source = source;
-  }
 }

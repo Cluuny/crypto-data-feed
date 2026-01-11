@@ -1,3 +1,4 @@
+// src/market-data/infrastructure/adapters/persistence/entities/typeorm-exchange.entity.ts
 import { Entity, PrimaryColumn } from 'typeorm';
 
 @Entity('exchanges')
